@@ -12,9 +12,9 @@ I'd like create a PydanticAI app with gemini api key.  Please create an entry pr
 
 ## Assistant
 
-好主意！`yfinance` 库完全免费、无需 API key，可以获取真实股票数据。让我更新计划。
+Great idea! The `yfinance` library is completely free, doesn't require an API key, and can fetch real stock data. Let me update the plan.
 
-现在更新计划，将 Demo 3 改为真实股票分析助手（使用 `yfinance` 免费数据）。
+Updating the plan now to change Demo 3 to a real stock analysis assistant (using free `yfinance` data).
 
 Now I'll build the project. Let me create all files in parallel.
 
@@ -32,29 +32,29 @@ Now I'll build the project. Let me create all files in parallel.
 
 Good questions:
 
-**1. 这个项目需要 AI 吗？**
+**1. Does this project need AI?**
 
-**核心指标计算不需要 AI** — Max Drawdown、Annualized Return、Beta、Alpha、Volatility 全是确定性数学公式，用 pandas + numpy 直接算即可。
+**Core metric calculations don't need AI** — Max Drawdown, Annualized Return, Beta, Alpha, and Volatility are all deterministic mathematical formulas that can be calculated directly with pandas + numpy.
 
-AI（PydanticAI + Gemini）在这里的角色是：
-- 作为**工具调用的编排层**（LLM 决定调用哪个工具、以什么顺序）
-- **结构化输出**验证（Pydantic 模型保证 JSON 格式正确）
-- 未来可扩展为**自然语言问答**（"我的组合风险如何？"）
+The role of AI (PydanticAI + Gemini) here is:
+- To act as a **tool-calling orchestration layer** (the LLM decides which tools to call and in what order)
+- **Structured output** validation (Pydantic models ensure the JSON format is correct)
+- Future extensibility for **natural language Q&A** (e.g., "How is my portfolio risk?")
 
-如果你只要指标数据，一个纯 Python 脚本就够了。这个项目的目的是展示 PydanticAI 框架的用法，Demo 3 是故意选了一个"可以不用 AI 但用了 AI 更有扩展性"的场景。
+If you only want the metric data, a pure Python script would suffice. The purpose of this project is to demonstrate the use of the PydanticAI framework. Demo 3 was intentionally chosen as a scenario where "AI isn't strictly necessary, but using it provides better extensibility".
 
-> 你要继续用 PydanticAI，还是改成纯 Python 脚本？或者两个版本都要？
+> Do you want to continue with PydanticAI, or change it to a pure Python script? Or both versions?
 
 ---
 
-**2. uv + venv — 明白，我会用 `uv` 来管理环境和依赖。**
+**2. uv + venv — Understood, I will use `uv` to manage the environment and dependencies.**
 
-具体改动：
-- 用 `uv venv` 创建虚拟环境
-- 用 `uv pip install -r requirements.txt` 安装（或者用 `pyproject.toml` + `uv sync`）
-- README 里的命令换成 `uv` 命令
+Specific changes:
+- Create a virtual environment using `uv venv`
+- Install dependencies using `uv pip install -r requirements.txt` (or use `pyproject.toml` + `uv sync`)
+- Replace commands in the README with `uv` commands
 
-你想用 `requirements.txt` 还是 `pyproject.toml`（更现代，uv 原生支持）？
+Would you like to use `requirements.txt` or `pyproject.toml` (which is more modern and natively supported by uv)?
 
 ---
 
@@ -66,60 +66,60 @@ think about a feature that AI can best fit, this project is to demo AI
 
 ## Assistant
 
-这是个好问题，值得认真想清楚。
+That's a good question, it's worth thinking through carefully.
 
-## 纯数学部分（不需要 AI）
+## Pure Mathematical Parts (No AI Needed)
 
-指标计算是确定性公式，pandas/numpy 直接算，LLM 介入只会带来不确定性和延迟：
+Metric calculations are deterministic formulas; pandas/numpy can calculate them directly. LLM involvement would only introduce uncertainty and latency:
 
-- Max Drawdown = 峰谷比
-- Annualized Return = 复利公式
+- Max Drawdown = peak-to-trough ratio
+- Annualized Return = compound interest formula
 - Beta = cov/var
-- Alpha = CAPM 公式
+- Alpha = CAPM formula
 - Volatility = std × √252
 
 ---
 
-## AI 真正能做好的事
+## What AI Can Truly Do Well
 
-在这个项目里，AI 最适合做**解读和分析**，而不是计算：
+In this project, AI is best suited for **interpretation and analysis**, rather than calculation:
 
-### 推荐方案：AI 作为投资分析师
+### Recommended Solution: AI as an Investment Analyst
 
-**流程：**
-1. 工具层（纯 Python）计算所有指标 → 返回数字
-2. AI 接收所有指标数据作为上下文
-3. AI 生成**结构化分析报告**，包含：
-   - 每只股票的风险解读（"TSLA 的 Beta=1.8 意味着市场跌 10% 时它预计跌 18%"）
-   - 组合整体风险评级（低/中/高）
-   - 薄弱环节识别（"TSLA 最大回撤 -45%，是组合最大风险源"）
-   - 具体改进建议（"可考虑增加低 Beta 资产对冲系统性风险"）
+**Workflow:**
+1. Tool layer (pure Python) calculates all metrics → returns numbers
+2. AI receives all metric data as context
+3. AI generates a **structured analysis report**, including:
+   - Risk interpretation for each stock (e.g., "A Beta of 1.8 for TSLA means it is expected to drop 18% when the market drops 10%")
+   - Overall portfolio risk rating (Low/Medium/High)
+   - Identification of weak points (e.g., "TSLA's maximum drawdown of -45% is the portfolio's biggest risk source")
+   - Specific improvement suggestions (e.g., "Consider adding low-Beta assets to hedge against systemic risk")
 
-**Pydantic 输出模型扩展：**
+**Pydantic Output Model Extension:**
 ```python
 class PortfolioReport(BaseModel):
-    # 纯数字指标（工具计算）
+    # Pure numeric metrics (tool calculations)
     stocks: list[StockMetrics]
     portfolio_total_return_pct: float
     ...
     
-    # AI 生成的分析内容
-    risk_level: Literal["低风险", "中等风险", "高风险"]
-    risk_summary: str        # AI 写的风险概述
-    stock_insights: list[str]  # 每只股票的 AI 解读
-    recommendations: list[str] # 具体可操作建议
-    market_context: str      # 与大盘对比的分析
+    # AI-generated analysis content
+    risk_level: Literal["Low Risk", "Medium Risk", "High Risk"]
+    risk_summary: str        # AI-written risk overview
+    stock_insights: list[str]  # AI interpretation for each stock
+    recommendations: list[str] # Specific actionable suggestions
+    market_context: str      # Analysis compared with the broader market
 ```
 
-**这样设计的原因：**
-- 数字→语言的转化是 LLM 的核心优势
-- 同样的 Beta=1.5，在牛市和熊市的含义完全不同，AI 能理解上下文
-- 用户看到的不是冷冰冰的数字，而是可读的中文分析
-- 完全展示了 PydanticAI 的工具调用 + 结构化输出两个核心概念
+**Reasons for this design:**
+- Converting numbers to language is a core strength of LLMs
+- A Beta of 1.5 has different meanings in bull vs. bear markets; AI can understand the context
+- Users see readable analysis instead of just cold numbers
+- It fully demonstrates the two core concepts of PydanticAI: tool calling and structured output
 
 ---
 
-这个方案你认可吗？确认后我就开始写代码。
+Do you approve of this plan? Once confirmed, I'll start coding.
 
 ---
 
@@ -137,39 +137,39 @@ All 52 packages installed. The project is ready.
 
 ---
 
-## 项目完成
+## Project Completed
 
 ```
 pydanticai-gemini-starter/
-├── .env.example          ← 复制为 .env 并填入 API key
-├── pyproject.toml        ← uv 项目配置
-├── .venv/                ← 已创建（uv venv + uv sync）
-├── main.py               ← 中文菜单入口
-├── demo_chat.py          ← Demo 1: 基础对话
-├── demo_structured.py    ← Demo 2: 文章分析
-├── demo_stocks.py        ← Demo 3: 投资组合分析
-└── portfolio.json        ← 示例持仓 (AAPL/TSLA/MSFT/NVDA)
+├── .env.example          ← Copy to .env and fill in the API key
+├── pyproject.toml        ← uv project configuration
+├── .venv/                ← Created (uv venv + uv sync)
+├── main.py               ← Menu entry point
+├── demo_chat.py          ← Demo 1: Basic Chat
+├── demo_structured.py    ← Demo 2: Article Analysis
+├── demo_stocks.py        ← Demo 3: Portfolio Analysis
+└── portfolio.json        ← Sample holdings (AAPL/TSLA/MSFT/NVDA)
 ```
 
-### 快速开始
+### Quick Start
 
 ```bash
 cd pydanticai-gemini-starter
-cp .env.example .env       # 填入 GOOGLE_API_KEY
+cp .env.example .env       # Fill in GOOGLE_API_KEY
 uv run python main.py
 ```
 
 ---
 
-### 三个 Demo 各自展示的 PydanticAI 概念
+### Three Demos and their PydanticAI Concepts
 
-| Demo | 核心概念 |
+| Demo | Core Concept |
 |------|---------|
-| 1. 基础对话 | `Agent()` 创建、`run_sync()`、系统提示 |
-| 2. 文章分析 | `output_type=ArticleAnalysis`，Pydantic 强制结构化输出 |
-| 3. 投资组合 | `@agent.tool_plain` 工具调用 + AI 生成分析报告 |
+| 1. Basic Chat | `Agent()` creation, `run_sync()`, system prompts |
+| 2. Article Analysis | `output_type=ArticleAnalysis`, Pydantic enforced structured output |
+| 3. Portfolio Analysis | `@agent.tool_plain` tool calling + AI generated analysis report |
 
-**Demo 3 的 AI 价值所在**：工具层用 yfinance + pandas 精确计算 Max Drawdown / Annualized Return / Beta / Alpha / Volatility，AI 的工作是将这些数字转化为人可读的中文分析报告（风险等级、个股洞察、投资建议）。
+**The value of AI in Demo 3**: The tool layer uses yfinance + pandas to precisely calculate Max Drawdown / Annualized Return / Beta / Alpha / Volatility. The AI's job is to transform these numbers into human-readable analysis reports (risk levels, individual stock insights, investment advice).
 
 ---
 
