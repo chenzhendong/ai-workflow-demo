@@ -63,7 +63,7 @@ class PortfolioReport(BaseModel):
 # ── Agent ─────────────────────────────────────────────────────────────────────
 
 agent = Agent(
-    "google-gla:gemini-2.0-flash",
+    "google-gla:gemini-2.5-flash",
     output_type=PortfolioReport,
     system_prompt=f"""You are a professional quantitative investment analyst.
 

@@ -1,6 +1,7 @@
 [
-  {"ticker": "AAPL", "buy_price": 150.00, "buy_date": "2023-01-15", "shares": 10},
-  {"ticker": "TSLA", "buy_price": 220.00, "buy_date": "2023-06-01", "shares": 5},
-  {"ticker": "MSFT", "buy_price": 280.00, "buy_date": "2023-03-10", "shares": 8},
-  {"ticker": "NVDA", "buy_price": 280.00, "buy_date": "2023-05-20", "shares": 6}
+  {"ticker": "AAPL",  "buy_price": 142.00, "buy_date": "2022-06-01", "shares": 20},
+  {"ticker": "NVDA",  "buy_price": 168.00, "buy_date": "2023-01-10", "shares": 15},
+  {"ticker": "MSFT",  "buy_price": 255.00, "buy_date": "2022-09-15", "shares": 10},
+  {"ticker": "TSLA",  "buy_price": 300.00, "buy_date": "2022-11-01", "shares": 8},
+  {"ticker": "JPM",   "buy_price": 125.00, "buy_date": "2023-03-20", "shares": 12}
 ]
